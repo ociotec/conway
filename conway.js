@@ -1,7 +1,7 @@
 let canvas;
 let context;
 let timer = null;
-let period = 100;
+let period = 200;
 let cellSize = 15;
 
 let cells;
@@ -16,7 +16,7 @@ const MAX_CELL_SIZE = 50;
 const CELL_EMPTY = 0;
 const CELL_LIFE = 1;
 
-const LIFE_PERCENTAGE = 0.05;
+const LIFE_PERCENTAGE = 0.07;
 
 function getRandom(max) {
     return getRandomMinMax(0, max - 1);
@@ -24,10 +24,6 @@ function getRandom(max) {
 
 function getRandomMinMax(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
-}
-
-function getRandomInc() {
-    return getRandomMinMax(-1, 1);
 }
 
 function drawBackground() {
@@ -100,7 +96,44 @@ function increaseCellSize() {
     initBoard();
 }
 
+function minusX(x) {
+    return (x + width - 1) % width;
+}
+
+function plusX(x) {
+    return (x + 1) % width;
+}
+
+function minusY(y) {
+    return (y + height - 1) % height;
+}
+
+function plusY(y) {
+    return (y + 1) % height;
+}
+
+function countLives(x, y) {
+    return (cells[minusY(y)][minusX(x)] == CELL_LIFE ? 1 : 0) + (cells[minusY(y)][x] == CELL_LIFE ? 1 : 0) +
+        (cells[minusY(y)][plusX(x)] == CELL_LIFE ? 1 : 0) + (cells[y][minusX(x)] == CELL_LIFE ? 1 : 0) +
+        (cells[y][plusX(x)] == CELL_LIFE ? 1 : 0) + (cells[plusY(y)][minusX(x)] == CELL_LIFE ? 1 : 0) +
+        (cells[plusY(y)][x] == CELL_LIFE ? 1 : 0) + (cells[plusY(y)][plusX(x)] == CELL_LIFE ? 1 : 0);
+}
+
 function moveLives() {
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let neighbors = countLives(x, y);
+            if (cells[y][x] === CELL_LIFE) {
+                if ((neighbors < 2) || (neighbors > 3)) {
+                    cells[y][x] = CELL_EMPTY;
+                }
+            } else {
+                if (neighbors === 3) {
+                    cells[y][x] = CELL_LIFE;
+                }
+            }
+        }
+    }
 }
 
 function frame() {
