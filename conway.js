@@ -5,6 +5,7 @@ let period = 200;
 let cellSize = 15;
 
 let cells;
+let tempCells;
 let width;
 let height;
 
@@ -123,15 +124,21 @@ function moveLives() {
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             let neighbors = countLives(x, y);
+            tempCells[y][x] = cells[y][x];
             if (cells[y][x] === CELL_LIFE) {
                 if ((neighbors < 2) || (neighbors > 3)) {
-                    cells[y][x] = CELL_EMPTY;
+                    tempCells[y][x] = CELL_EMPTY;
                 }
             } else {
                 if (neighbors === 3) {
-                    cells[y][x] = CELL_LIFE;
+                    tempCells[y][x] = CELL_LIFE;
                 }
             }
+        }
+    }
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            cells[y][x] = tempCells[y][x];
         }
     }
 }
@@ -160,12 +167,17 @@ function initBoard() {
     height = Math.floor(canvas.height / cellSize);
 
     cells = [];
+    tempCells = [];
     cells.length = height;
+    tempCells.length = height;
     for (let y = 0; y < height; y++) {
         cells[y] = [];
+        tempCells[y] = [];
         cells[y].length = width;
+        tempCells[y].length = width;
         for (let x = 0; x < width; x++) {
             cells[y][x] = CELL_EMPTY;
+            tempCells[y][x] = CELL_EMPTY;
         }
     }
 
